@@ -9,7 +9,7 @@ let ORG: string = "";
 // optional arguments
 let SINCE: Date | undefined;
 let UNTIL: Date | undefined;
-let OUTFILE: string = "out/contributionCounter.json";
+let OUTFILE: string = "out/contributionStats.json";
 
 // parse command line arguments
 process.argv.slice(2).forEach((arg) => {
@@ -30,7 +30,7 @@ process.argv.slice(2).forEach((arg) => {
 // argument validation
 if (!ORG || !TOKEN) {
   console.error(
-    "Usage: npm run contributionCounter -- --org=organization [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--out=filename.json]",
+    "Usage: npm run contributionStats -- --org=organization [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--out=filename.json]",
   );
   console.error(
     "Make sure to set the GITHUB_TOKEN in .env file or as an environment variable.",
@@ -43,14 +43,15 @@ const octokit = new Octokit({ auth: TOKEN });
 interface RepoStats {
   name: string;
   contributors_count: number;
+  top_contributors: string[];
   commit_count: number;
 }
 
 interface OrgStats {
   repositories: number;
   repos: RepoStats[];
-  unique_contributors: number;
-  total_commits: number;
+  unique_contributors_count: number;
+  total_commits_count: number;
 }
 
 async function main() {
@@ -65,8 +66,8 @@ async function main() {
   const orgStats: OrgStats = {
     repositories: repos.length,
     repos: [],
-    unique_contributors: 0,
-    total_commits: 0,
+    unique_contributors_count: 0,
+    total_commits_count: 0,
   };
   const orgUniqueContributors = new Set<string>();
 
@@ -83,30 +84,40 @@ async function main() {
       console.debug(`${repo.name}: ${commits.length} commits`);
 
       // Contributors of commits
-      const contributors = new Set<string>();
-      for (const commit of commits) {
-        if (commit.author?.login) {
-          contributors.add(commit.author.login);
-        } else if (commit.commit.author?.email) {
-          contributors.add(commit.commit.author.email);
-        }
+      const uniqueContributors = new Set<string>();
+      const commitsPerContributor = new Map<string, number>();
+
+      function handleContributor(commiter: string | undefined) {
+        if (!commiter) return;
+        uniqueContributors.add(commiter);
+        orgUniqueContributors.add(commiter);
+        commitsPerContributor.set(
+          commiter,
+          (commitsPerContributor.get(commiter) ?? 0) + 1,
+        );
       }
-      for (const contributor of contributors) {
-        orgUniqueContributors.add(contributor);
-      }
-      console.debug(`${repo.name}: ${contributors.size} contributors`);
+
+      commits.forEach((commit) =>
+        handleContributor(commit.author?.login ?? commit.commit.author?.email),
+      );
+      const topContributors = Array.from(commitsPerContributor.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([contributor]) => contributor);
+      console.debug(`${repo.name}: ${uniqueContributors.size} contributors`);
 
       orgStats.repos.push({
         name: repo.name,
-        contributors_count: contributors.size,
+        contributors_count: uniqueContributors.size,
+        top_contributors: topContributors,
         commit_count: commits.length,
       });
 
-      orgStats.total_commits += commits.length;
+      orgStats.total_commits_count += commits.length;
     }),
   );
 
-  orgStats.unique_contributors = orgUniqueContributors.size;
+  orgStats.unique_contributors_count = orgUniqueContributors.size;
 
   writeFileSync(OUTFILE, JSON.stringify(orgStats, null, 2), {
     encoding: "utf-8",

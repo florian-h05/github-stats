@@ -24,16 +24,17 @@ Put it into a `.env` file in the root of the repository:
 GITHUB_TOKEN=your_github_personal_access_token
 ```
 
-## Commit & Contributor Counts
+## Commit & Contributor Stats
 
-The [`contributionCounter.ts`](src/contributionCounter.ts) script counts the number of commits and contributors for each repository in a GitHub organisation.
+The [`contributionStats.ts`](src/contributionStats.ts) script counts the number of commits and contributors for each repository in a GitHub organisation.
 It also provides these statistics for the organisation as a whole, only counting unique contributors across all repositories.
+In addition to that, top 5 contributors per repository are listed as well.
 
 Contributions are counted across the main branch only.
 Contributors are counted based on their GitHub usernames, with a fallback to the commit author's email if the username is not available.
 
 ```shell
-npm run contributionCounter -- --org=organization [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--out=filename.json]
+npm run contributionStats -- --org=organization [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--out=filename.json]
 ```
 
 ## Pull Request Tag Counts
