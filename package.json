@@ -1,0 +1,22 @@
+{
+  "name": "gh-stats",
+  "version": "0.0.1",
+  "scripts": {
+    "compile": "rm -r dist && tsc",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "contributionCounter": "npm run compile && node --env-file=.env dist/contributionCounter.js"
+  },
+  "author": "Florian Hotze",
+  "license": "MIT",
+  "description": "A collection of tools for analyzing GitHub organisations and repositories.",
+  "private": true,
+  "dependencies": {
+    "@octokit/rest": "^22.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.4",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3"
+  }
+}
