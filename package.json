@@ -5,7 +5,8 @@
     "compile": "rm -r dist && tsc",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "contributionCounter": "npm run compile && node --env-file=.env dist/contributionCounter.js"
+    "contributionCounter": "npm run compile && node --env-file=.env dist/contributionCounter.js",
+    "pullRequestTagsCounter": "npm run compile && node --env-file=.env dist/pullRequestTagsCounter.js"
   },
   "author": "Florian Hotze",
   "license": "MIT",

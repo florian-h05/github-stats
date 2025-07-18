@@ -38,11 +38,11 @@ export async function fetchAllCommits(
   return results;
 }
 
-export async function getAllPullRequests(
+export async function fetchAllPullRequests(
   octokit: Octokit,
   owner: string,
   repo: string,
-  state: "open" | "closed" | "all" = "all",
+  state: "open" | "merged" | "closed" | "all" = "all",
 ) {
   const results = [];
   for await (const { data } of octokit.paginate.iterator(
@@ -50,11 +50,14 @@ export async function getAllPullRequests(
     {
       owner,
       repo,
-      state,
+      state: state === "merged" ? "closed" : state,
       per_page: 100,
     },
   )) {
     results.push(...data);
+  }
+  if (state === "merged") {
+    return results.filter((pr) => pr.merged_at !== null);
   }
   return results;
 }

@@ -35,3 +35,12 @@ Contributors are counted based on their GitHub usernames, with a fallback to the
 ```shell
 npm run contributionCounter -- --org=organization [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--out=filename.json]
 ```
+
+## Pull Request Tag Counts
+
+The [`pullRequestTagCounter.ts`](src/pullRequestTagCounter.ts) script counts the number of merged pull requests and their associated tags for a single repository.
+It provides a breakdown of the number of pull requests per tag, as well as the total number of pull requests.
+
+```shell
+npm run pullRequestTagCounter -- --owner=owner --repo=repo [--out=filename.json]
+```
