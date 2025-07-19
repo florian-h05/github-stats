@@ -2,7 +2,7 @@
   "name": "gh-stats",
   "version": "0.0.1",
   "scripts": {
-    "compile": "rm -r dist && tsc",
+    "compile": "rm -rf dist && tsc",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "main": "node --env-file=.env dist/main.js"
