@@ -6,6 +6,8 @@ import type { Octokit } from "@octokit/rest";
  * @param org The organisation's username.
  */
 export async function fetchAllRepos(octokit: Octokit, org: string) {
+  console.debug(`Fetching all repos for organisation ${org} ...`);
+  console.time("fetchAllRepos");
   const results = [];
   for await (const { data } of octokit.paginate.iterator(
     octokit.rest.repos.listForOrg,
@@ -17,6 +19,8 @@ export async function fetchAllRepos(octokit: Octokit, org: string) {
   )) {
     results.push(...data);
   }
+  console.timeEnd("fetchAllRepos");
+  console.debug(`Fetched all repos for organisation ${org}.`);
   return results;
 }
 
@@ -35,6 +39,8 @@ export async function fetchAllCommits(
   since?: Date,
   until?: Date,
 ) {
+  console.debug(`Fetching all commits for ${owner}/${repo} ...`);
+  console.time("fetchAllCommits");
   const results = [];
   for await (const { data } of octokit.paginate.iterator(
     octokit.rest.repos.listCommits,
@@ -48,6 +54,8 @@ export async function fetchAllCommits(
   )) {
     results.push(...data);
   }
+  console.timeEnd("fetchAllCommmits");
+  console.debug(`Fetched all commits for ${owner}/${repo}.`);
   return results;
 }
 
@@ -70,6 +78,8 @@ export async function fetchAllPullRequests(
   state: "open" | "merged" | "closed" | "all" = "all",
   milestone?: string,
 ) {
+  console.debug(`Fetching all pull requests for ${owner}/${repo} ...`);
+  console.time("fetchAllPullRequests");
   const results = [];
   let abortCountdown = 100;
   for await (const { data } of octokit.paginate.iterator(
@@ -91,5 +101,7 @@ export async function fetchAllPullRequests(
     }
     if (abortCountdown <= 0) break;
   }
+  console.timeEnd("fetchAllPullRequests");
+  console.debug(`Fetched all PRs for ${owner}/${repo}.`);
   return results;
 }
