@@ -3,13 +3,14 @@
 This repo hosts a collection of scripts to generate statistics from GitHub organisations and repositories.
 It uses the GitHub's [Octokit](https://github.com/octokit/octokit.js) SDK to fetch the data and outputs it in JSON format.
 
-## Usage
+## Pre-Requisites
 
 Before using the scripts, you need to set up your environment:
 
 ```shell
 nvm use # Use the Node.js version specified in .nvmrc
 npm install # Install the dependencies
+npm run compile # Compile the TypeScript code to JavaScript
 ```
 
 Next, you need to create a GitHub personal access token:
@@ -24,24 +25,26 @@ Put it into a `.env` file in the root of the repository:
 GITHUB_TOKEN=your_github_personal_access_token
 ```
 
-## Commit & Contributor Stats
+## Usage
 
-The [`contributionStats.ts`](src/contributionStats.ts) script counts the number of commits and contributors for each repository in a GitHub organisation.
-It also provides these statistics for the organisation as a whole, only counting unique contributors across all repositories.
-In addition to that, top 5 contributors per repository are listed as well.
-
-Contributions are counted across the main branch only.
-Contributors are counted based on their GitHub usernames, with a fallback to the commit author's email if the username is not available.
-
-```shell
-npm run contributionStats -- --org=organization [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--out=filename.json]
+```text
+Usage: npm run main -- <command> -- --owner=owner [--repo=repository] [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--milestone=milestone] [--out=filename.json]
+Available commands: contribution_stats, pull_request_stats
 ```
 
-## Pull Request Tag Counts
+Every command outputs a JSON file with the statistics.
+Use the `--out` option to specify the output file name. If not specified, the output will be printed to the `out` directory with the name of the command as the file name.
 
-The [`pullRequestTagCounter.ts`](src/pullRequestTagCounter.ts) script counts the number of merged pull requests and their associated tags for a single repository.
-It provides a breakdown of the number of pull requests per tag, as well as the total number of pull requests.
+### `contribution_stats`
 
-```shell
-npm run pullRequestTagCounter -- --owner=owner --repo=repo [--out=filename.json]
-```
+This command generates statistics about commits and contributors to a repository or an organisation.
+When specifying the `--repo` option, it will analyse the specified repository only, otherwise it will analyse all repositories of the specified organisation.
+
+You may use the `--since` and `--until` options to limit the time range of the analysis.
+
+### `pull_request_stats`
+
+This command generates statistics about merged pull requests in a repository.
+It requires the `--repo` option (in addition to the `--owner` option that is always required) to specify the repository to analyse.
+
+You may use the `--milestone` option to filter pull requests by a specific milestone.
