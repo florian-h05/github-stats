@@ -62,7 +62,7 @@ export async function fetchAllCommits(
 /**
  * Fetches all pull requests for a given repository.
  *
- * If the milestone argument is provided, the method will abort fetching older PRs as soon as at least 100 PRs without the milestone have been fetched.
+ * If the milestone argument is provided, the method will abort fetching older PRs as soon as at least 500 PRs without the milestone have been fetched.
  * This way it is avoided that all PRs have to be fetched if they should be filtered by milestone.
  *
  * @param octokit An instance of Octokit.
@@ -81,7 +81,7 @@ export async function fetchAllPullRequests(
   console.debug(`Fetching all pull requests for ${owner}/${repo} ...`);
   console.time("fetchAllPullRequests");
   const results = [];
-  let abortCountdown = 100;
+  let abortCountdown = 500;
   for await (const { data } of octokit.paginate.iterator(
     octokit.rest.pulls.list,
     {
@@ -89,13 +89,16 @@ export async function fetchAllPullRequests(
       repo,
       state: state === "merged" ? "closed" : state,
       per_page: 100,
-      sort: "created",
+      sort: "updated",
       direction: "desc",
       milestone,
     },
   )) {
     for (const pr of data) {
-      if (milestone && pr.milestone?.title !== milestone) abortCountdown--;
+      if (milestone && pr.milestone?.title !== milestone) {
+        abortCountdown--;
+        continue;
+      }
       if (state === "merged" && pr.merged_at === null) continue;
       results.push(pr);
     }
