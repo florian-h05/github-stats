@@ -69,6 +69,7 @@ export async function getPullRequestStats(
     repo.owner,
     repo.name,
     "merged",
+    milestone,
   );
 
   const stats: PullRequestStats = {
@@ -79,10 +80,6 @@ export async function getPullRequestStats(
   };
 
   for (const pr of pullRequests) {
-    if (milestone && pr.milestone?.title !== milestone) {
-      continue;
-    }
-
     stats.pr_count++;
 
     if (pr.labels.length > 0) {
