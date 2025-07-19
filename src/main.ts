@@ -8,12 +8,6 @@ import {
 import { Octokit } from "@octokit/rest";
 
 const githubToken = process.env.GITHUB_TOKEN ?? "";
-if (!githubToken) {
-  console.error(
-    "GITHUB_TOKEN is not set. Please set it in your environment or .env file.",
-  );
-  process.exit(1);
-}
 
 // mandatory arguments
 const command = process.argv[2];

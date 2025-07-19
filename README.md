@@ -13,7 +13,8 @@ npm install # Install the dependencies
 npm run compile # Compile the TypeScript code to JavaScript
 ```
 
-Next, you need to create a GitHub personal access token:
+If you want to generate statistics for larger GitHub organisations, you need to authenticate yourself against the GitHub API for higher rate limits.
+To do so, you need to create a GitHub personal access token:
 
 - Go to your GitHub account settings, navigate to _Developer settings_ > _Personal access tokens_.
 - Choose _Fine-grained tokens_.
