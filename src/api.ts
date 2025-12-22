@@ -40,7 +40,7 @@ export async function fetchAllCommits(
   until?: Date,
 ) {
   console.debug(`Fetching all commits for ${owner}/${repo} ...`);
-  console.time("fetchAllCommits");
+  console.time(`fetchAllCommmits (${owner}/${repo})`);
   const results = [];
   for await (const { data } of octokit.paginate.iterator(
     octokit.rest.repos.listCommits,
@@ -54,7 +54,7 @@ export async function fetchAllCommits(
   )) {
     results.push(...data);
   }
-  console.timeEnd("fetchAllCommmits");
+  console.timeEnd(`fetchAllCommmits (${owner}/${repo})`);
   console.debug(`Fetched all commits for ${owner}/${repo}.`);
   return results;
 }
